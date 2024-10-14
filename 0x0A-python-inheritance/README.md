@@ -1,0 +1,1 @@
+Alah! Namna gani huku!
