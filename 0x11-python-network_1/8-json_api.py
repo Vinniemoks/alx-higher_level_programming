@@ -1,47 +1,24 @@
 #!/usr/bin/python3
-"""
-<<<<<<< HEAD
-script that takes in a letter and sends a POST request to
-http://0.0.0.0:5000/search_user with the letter as a parameter.
-"""
-import requests
-import sys
+"""Sends a request to the URL and displays the body of the response."""
 
 
-if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        q = ""
-    else:
-        q = sys.argv[1]
+if __name__ == '__main__':
+    from requests import post
+    from sys import argv
 
-        url = 'http://0.0.0.0:5000/search_user'
-        data = {'q': q}
+    URL = 'http://0.0.0.0:5000/search_user'
+    data = {'q': argv[1] if len(argv) >= 2 else ""}
+    response = post(URL, data)
 
-        response = requests.post(url, data=data)
-        try:
-            json_response = response.json()
-            if json_response:
-                print(f"[{json_response['id']}] {json_response['name']}")
-            else:
-                print("No result")
-        except ValueError:
-            print("Not a valid JSON")
-=======
-Takes in a letter and sends a POST request to http://0.0.0.0:5000/search_user
-with the letter as a parameter
-"""
-import sys
-import requests
-if __name__ == "__main__":
-    letter = "" if len(sys.argv) == 1 else sys.argv[1]
-    payload = {"q": letter}
-    r = requests.post("http://0.0.0.0:5000/search_user", data=payload)
-    try:
-        response = r.json()
-        if response == {}:
-            print("No result")
+    type_res = response.headers['content-type']
+
+    if type_res == 'application/json':
+        result = response.json()
+        _id = result.get('id')
+        name = result.get('name')
+        if (result != {} and _id and name):
+            print("[{}] {}".format(_id, name))
         else:
-            print("[{}] {}".format(response.get("id"), response.get("name")))
-    except ValueError:
-        print("Not a valid JSON")
->>>>>>> 85c830d5152b4c87b4bb23ab8ef9119fffe1b20d
+            print('No result')
+    else:
+        print('Not a valid JSON')
